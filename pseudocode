@@ -1,0 +1,49 @@
+FUNCTION KnapsackTopDown(berat, keuntungan, kapasitas)
+    jumlah_objek ← LENGTH(berat)
+    MEMO ← 2D ARRAY of size (jumlah_objek + 1) x (kapasitas + 1), filled with -1
+
+    FUNCTION RekursifKnapsack(indeks, sisa_kapasitas)
+        IF indeks = 0 OR sisa_kapasitas = 0 THEN
+            RETURN 0
+
+        IF MEMO[indeks][sisa_kapasitas] ≠ -1 THEN
+            RETURN MEMO[indeks][sisa_kapasitas]
+
+        tidak_ada_objek ← RekursifKnapsack(indeks - 1, sisa_kapasitas)
+
+        memasukkan ← 0
+        IF berat[indeks - 1] ≤ sisa_kapasitas THEN
+            memasukkan ← keuntungan[indeks - 1] + RekursifKnapsack(indeks - 1, sisa_kapasitas - berat[indeks - 1])
+
+        MEMO[indeks][sisa_kapasitas] ← MAX(tidak_ada_objek, memasukkan)
+
+        RETURN MEMO[indeks][sisa_kapasitas]
+    END FUNCTION
+
+    RETURN RekursifKnapsack(jumlah_objek, kapasitas)
+END FUNCTION
+
+
+
+
+
+
+FUNCTION KnapsackBottomUp(berat, keuntungan, kapasitas)
+    jumlah_objek ← LENGTH(berat)
+    TABEL_DP ← 2D ARRAY of size (jumlah_objek + 1) x (kapasitas + 1), initialized to 0
+
+    FOR i FROM 1 TO jumlah_objek DO
+        FOR batas_kapasitas FROM 1 TO kapasitas DO
+            IF berat[i - 1] ≤ batas_kapasitas THEN
+                TABEL_DP[i][batas_kapasitas] ← MAX(
+                    TABEL_DP[i - 1][batas_kapasitas],
+                    keuntungan[i - 1] + TABEL_DP[i - 1][batas_kapasitas - berat[i - 1]]
+                )
+            ELSE
+                TABEL_DP[i][batas_kapasitas] ← TABEL_DP[i - 1][batas_kapasitas]
+            END IF
+        END FOR
+    END FOR
+
+    RETURN TABEL_DP[jumlah_objek][kapasitas]
+END FUNCTION
